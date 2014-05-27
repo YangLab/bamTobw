@@ -3,6 +3,12 @@ bamTobw
 
 Convert BAM files to bigWig files with a simple command
 
+Advantage
+=========
+
+* Enable to scale expression signals to HPB (Hits Per Billion-mapped-bases). More information about HPB refer to [Zhu S*, Xiang JF*, Tian C, Chen LL# and Yang L#. Prediction of constitutive A-to-I editing sites from human transcriptomes in the absence of genomic sequences. BMC Genomics, 2013, 14:206](http://www.biomedcentral.com/1471-2164/14/206)
+* Enable to divide the BAM file according to the strand information of each read
+
 Usage
 =====
 
