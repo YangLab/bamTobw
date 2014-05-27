@@ -17,13 +17,13 @@ Usage: bamTobw.sh -b <bamlist> [-s] [-d]
 Requirements
 ============
 
-* (samtools)[http://samtools.sourceforge.net/]
-* (UCSC utilities)[http://hgdownload.cse.ucsc.edu/admin/exe/]
-* (bedtools)[https://github.com/arq5x/bedtools2]
+* [samtools](http://samtools.sourceforge.net)
+* [UCSC utilities](http://hgdownload.cse.ucsc.edu/admin/exe)
+* [bedtools](https://github.com/arq5x/bedtools2)
 
 License
 =======
 
 Copyright (C) 2014 YangLab.
-See the (LICENSE)[https://github.com/YangLab/bamTobw/blob/master/LICENSE]
+See the [LICENSE](https://github.com/YangLab/bamTobw/blob/master/LICENSE)
 file for license rights and limitations (MIT).
