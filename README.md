@@ -27,6 +27,11 @@ Requirements
 * [UCSC utilities](http://hgdownload.cse.ucsc.edu/admin/exe)
 * [bedtools](https://github.com/arq5x/bedtools2)
 
+Note
+====
+
+For stranded sequencing, the default sequencing protocl is dUTP methods. More discussions please refer to [issue #1](https://github.com/YangLab/bamTobw/issues/1).
+
 License
 =======
 
