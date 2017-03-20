@@ -14,10 +14,11 @@ Usage
 
 ```bash
 bamTobw.sh -- convert stranded sequencing BAM file to bigWig file
-Usage: bamTobw.sh -b <bamlist> [-s] [-d]
+Usage: bamTobw.sh -b <bamlist> [-s] [-d] [-l <readlength>]
 -b <bamlist> -- file contains bam files (one file per line)
 -s -- if set, related files will be scaled to HPB
 -d -- if set, bam file will be divide into strand plus and strand minus
+-l <readlength> -- you could assign it instead of reading from bam file
 ```
 
 Requirements
@@ -31,6 +32,8 @@ Note
 ====
 
 For stranded sequencing, the default sequencing protocl is dUTP methods. More discussions please refer to [issue #1](https://github.com/YangLab/bamTobw/issues/1).
+
+This tool is suitable for different sequencing types and trimmed reads. See [issue #2](https://github.com/YangLab/bamTobw/issues/2).
 
 License
 =======

@@ -4,10 +4,11 @@
 
 function help {
     echo "bamTobw.sh -- convert stranded sequencing BAM file to bigWig file"
-    echo "Usage: bamTobw.sh -b <bamlist> [-s] [-d]"
+    echo "Usage: bamTobw.sh -b <bamlist> [-s] [-d] [-l <readlength>]"
     echo "-b <bamlist> -- file contains bam files (one file per line)"
     echo "-s -- if set, related files will be scaled to HPB"
     echo "-d -- if set, bam file will be divide into strand plus and strand minus"
+    echo "-l <readlength> -- you could assign it instead of reading from bam file"
     exit 0
 }
 
@@ -27,13 +28,16 @@ function bam_divide {
 function bam_to_bedgraph {
     local bam_file=$1.bam
     local name=$2.bedgraph
-    local chrom_sizes=$3
-    local scale_flag=$4
-    local flag=$5
+    local read_length=$3
+    local chrom_sizes=$4
+    local scale_flag=$5
+    local flag=$6
     # count total reads using samtools idxstats, it reads infomation from heads of BAM files
     local count=$(samtools idxstats $bam_file | perl -ane '$a+=$F[2];END{print "$a"}')
     # determine read length using a perl script borrowed from Shanshan Zhu
-    local read_length=$(samtools view $bam_file | perl -lane 'print scalar(split //,$F[9]) and last if $F[5]=~/^[\dM]*$/;')
+    if [[ $read_length -eq 1 ]]; then
+        read_length=$(samtools view $bam_file | perl -lane 'print scalar(split //,$F[9]) and last if $F[5]=~/^[\dM]*$/;')
+    fi
     local ratio=1
     if (( $scale_flag )); then
         ratio=`echo "scale=8;r=1000000000/$count/$read_length;if(length(r)==scale(r)) print 0;print r" | bc`
@@ -61,7 +65,7 @@ function bedgraph_to_bw {
 scale_flag=0
 stranded_flag=0
 
-while getopts ":b:sd" optname; do
+while getopts ":b:sdl:" optname; do
     case $optname in
         b)
             bam_list=$OPTARG;;
@@ -69,6 +73,8 @@ while getopts ":b:sd" optname; do
             scale_flag=1;;
         d)
             stranded_flag=1;;
+        l)
+            read_length=$OPTARG;;
         :)
             help;;
         ?)
@@ -97,6 +103,9 @@ fi
 while read line; do
     echo "Deal with $line at "`date` | tee -a bamTobw.log
     echo "Index $line" | tee -a bamTobw.log
+    if [[ -z $read_length ]]; then
+        read_length=1
+    fi
     samtools index $line
     prefix=${line%%.bam}
     samtools idxstats $line | perl -alne 'print "$F[0]\t$F[1]" if $F[0]!~/\*/' > chrom_sizes.tmp
@@ -108,15 +117,15 @@ while read line; do
         bam_divide $line $plus_name 1
         bam_divide $line $minus_name 0
         echo "Convert bam to bedgraph" | tee -a bamTobw.log
-        bam_to_bedgraph $plus_name $plus_name $chrom_sizes $scale_flag 1
-        bam_to_bedgraph $minus_name $minus_name $chrom_sizes $scale_flag 0
+        bam_to_bedgraph $plus_name $plus_name $read_length $chrom_sizes $scale_flag 1
+        bam_to_bedgraph $minus_name $minus_name $read_length $chrom_sizes $scale_flag 0
         echo "Convert bedgraph to bw" | tee -a bamTobw.log
         bedgraph_to_bw $plus_name $chrom_sizes
         bedgraph_to_bw $minus_name $chrom_sizes
     else
         line=$prefix
         echo "Convert bam to bedgraph" | tee -a bamTobw.log
-        bam_to_bedgraph $line $prefix $chrom_sizes $scale_flag 1
+        bam_to_bedgraph $line $prefix $read_length $chrom_sizes $scale_flag 1
         echo "Convert bedgraph to bw" | tee -a bamTobw.log
         bedgraph_to_bw $prefix $chrom_sizes
     fi
