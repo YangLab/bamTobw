@@ -20,6 +20,7 @@ Usage: bamTobw.sh -b <bamlist> [-s] [-d] [-l <readlength>]
 -d -- if set, bam file will be divide into strand plus and strand minus
 -l <readlength> -- you could assign it instead of reading from bam file
 ```
+**Note: `-d` is only suitable for single reads, not for paired-end reads.**
 
 Requirements
 ============
